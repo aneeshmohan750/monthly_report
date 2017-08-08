@@ -1021,21 +1021,7 @@ class Common_model extends CI_Model {
   
   }
   
-  public function report_correction($segment_id,$dat){
-	
-	$query= $this->db->query("SELECT cm.contact_id,cm.create_date,cm.id as map_id FROM contact_segment_map as cm LEFT JOIN contacts as c on(cm.contact_id=c.id) WHERE c.client_id=5 AND   cm.update_date='".$dat."' "); 
-	
-	 if ($query->num_rows() > 0) {
-            foreach ($query->result() as $row) {
-		       $map_id=$row->map_id;
-			   $this->common_model->delete('contact_segment_map',array("update_date"=>'2017-03-31'),array("id"=>$map_id));
-			  		
-			}
-		  
-	    }
-	  
-	  
-  }
+ 
   
   public  function getToppagelastmonthVisit($client,$month){
     
@@ -1152,109 +1138,18 @@ class Common_model extends CI_Model {
   
   }
   
-  /*public function sync_data_dummy(){
-    
-	 
-	 
-	 $this->load->library('GoogleAnalyticsAPI');		
-	
-	 $sync = false;
-	 	 
-	
-	      for($i=1;$i<=4;$i++){
-	  
-	  $date = '2017-'.$i.'-01';
-	  
-	  $month_end = date('Y-m-t',strtotime($date));
-	  $month_start = date('Y-m-01',strtotime($date));
-	  $clients		=	$this->get_data('clients','*',array('id'=>29,'status'=>'1'));
-	  for($j=1;$j<7;$j++)
-	  $this->request_ga_site_visitors($clients[0],$j,$month_start,$month_end);
-		
-	}
-		   $sync = true;
-		   
-		
-	   
-	
-	
-   return $sync;  
   
-  }*/
  
- public function sync_previous_ga_data(){
-   $this->load->library('GoogleAnalyticsAPI');	
-  $ga_events  =  $this->get_data('ga_events','*',array('status'=>'1'));
-  
-   
-	 $start_month=8;
-  $start_year=2016; 
-  $client_id=30; 
- $ga_clients		=	$this->get_data('clients','*',array('id'=>$client_id, 'status'=>'1','enable_ga_details'=>'1'));
 
-  for($start_mon=$start_month;$start_mon<=12;$start_mon++){
-	    
-		$start_date = date('Y-m-d',strtotime($start_year.'-'.$start_mon.'-01'));
-		$end_date = date('Y-m-t',strtotime($start_date));
-	   for($j=0;$j<count($ga_events);$j++)  {	
-	     
-		 $query = $this->db->query("SELECT * FROM ga_site_visitors WHERE date>='".$start_date."' AND date<='".$end_date."' AND client_id='".$client_id."'
-		                             AND ga_event_id=".$ga_events[$j]['id']."");
-	     $ga_site_vistors = $query->result(); 
-		 	
-	     if(!$ga_site_vistors){	  
-	       $this->request_ga_site_visitors($ga_clients[0],$ga_events[$j]['id'],$start_date,$end_date);
-		   $sync = true;
-		   
-		 }
-	       
-	   } 
-	   
-	   
-	
-	   
-  }
-  
-  
-	 $start_month=1;
-  $start_year=2017;  
- 
-  for($start_mon=$start_month;$start_mon<=12;$start_mon++){
-	    
-		$start_date = date('Y-m-d',strtotime($start_year.'-'.$start_mon.'-01'));
-		$end_date = date('Y-m-t',strtotime($start_date));
-		
-	   for($j=0;$j<count($ga_events);$j++)  {	
-	     
-		 $query = $this->db->query("SELECT * FROM ga_site_visitors WHERE date>='".$start_date."' AND date<='".$end_date."' AND client_id='".$client_id."'
-		                             AND ga_event_id=".$ga_events[$j]['id']."");
-	     $ga_site_vistors = $query->result(); 
-		 	
-	     if(!$ga_site_vistors){	  
-	       $this->request_ga_site_visitors($ga_clients[0],$ga_events[$j]['id'],$start_date,$end_date);
-		   $sync = true;
-		   
-		 }
-	       
-	   } 
-	   
-	   
-	  
-	   
-  }
- 
-  exit;
-	   
- }
   
   public function request_ga_site_visitors($client,$event_id,$from_day,$to_day,$type='save') {
    
     if(!$client) return false;
 	
-	$client_id = '2b46de053fbb7c199b6883dda88e54edc2eb78c9';
-	$client_api_email = 'monthly-report@monthly-report-analytics.iam.gserviceaccount.com';
+	$client_id = '';
+	$client_api_email = '';
 	$account_id = $client['ga_account_id'];
-	$private_key = FCPATH.'uploads/secret_key/Monthly-report-analytics-2b46de053fbb.p12';
+	$private_key = '';
 	
 	if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -1419,10 +1314,10 @@ class Common_model extends CI_Model {
 	
     if(!$client) return false;
 	
-	$client_id = '2b46de053fbb7c199b6883dda88e54edc2eb78c9';
-	$client_api_email = 'monthly-report@monthly-report-analytics.iam.gserviceaccount.com';
+	$client_id = '';
+	$client_api_email = '';
 	$account_id = $client['ga_account_id'];
-	$private_key = FCPATH.'uploads/secret_key/Monthly-report-analytics-2b46de053fbb.p12';
+	$private_key = '';
 	if($type=='count')
 	  session_start();
 	unset($_SESSION['oauth_access_token']);
@@ -1498,7 +1393,7 @@ class Common_model extends CI_Model {
   
   public function request_segmentation_data($client_id,$listtrak_id) {
    
-     $url ='http://passmailapi.azurewebsites.net/Login/Authenticate?UserID=passuser&Password=zKRwX965xEmxgy4ZUJ9r';
+     $url ='';
      //  Initiate curl
      $ch = curl_init();
     // Disable SSL verification  
@@ -1516,7 +1411,7 @@ class Common_model extends CI_Model {
     $data= json_decode($result);
 	$token = $data[0]->token;
     
-	$url =  'http://passmailapi.azurewebsites.net/passmailmaster/GetData?id=268030&DateFrom=2016-06-01&DateTo=2016-06-30&AccesToken='.$token;
+	$url =  '';
 	
 	//  Initiate curl
      $ch = curl_init();
